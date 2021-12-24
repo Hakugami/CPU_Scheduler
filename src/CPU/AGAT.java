@@ -7,6 +7,7 @@ import java.util.*;
 public class AGAT extends  CPUScheduler {
     protected Queue<Process> readyQueue=new LinkedList<Process>();
     private ArrayList<Process> outputTest = new ArrayList<Process>();
+    private ArrayList<Process> processes2 = new ArrayList<Process>();
     public float calculate_v1() {
         float v1;
         int res=processes.get(processes.size()-1).getArrivalTime();
@@ -21,14 +22,14 @@ public class AGAT extends  CPUScheduler {
         float v2;
         int res=0;
         int n= processes.size();
-        int[] reming_burst = new int[n];
+        ArrayList<Integer> remainingBursts = new ArrayList<Integer>();
         for (int i = 0; i < n; i++){
-            reming_burst[i] = processes.get(i).getBurstTime();
+            remainingBursts.add(  processes.get(i).getRemainingTime());
         }
-        int mx=reming_burst[0];
+        int mx=remainingBursts.get(0);
         for(int i=0;i<n;i++){
-
-            res=Math.max(mx,reming_burst[i]);
+            res=Math.max(mx,remainingBursts.get(i));
+//            System.out.println("mx: "+mx+"---------remainingBursts: "+remainingBursts.get(i));
         }
         if (res > 10) {
             v2 = res/10F;
@@ -41,7 +42,7 @@ public class AGAT extends  CPUScheduler {
 
        float v1=calculate_v1();
        float v2=calculate_v2();
-
+        System.out.println("V2: "+v2);
         return ((10 - priority) + Math.ceil(arrivalTime / v1) + Math.ceil(burstTime / v2));
     }
 
@@ -204,20 +205,23 @@ public class AGAT extends  CPUScheduler {
             System.out.println(p);
         }
 
-        for(Process p: processes)
+        for(Process p: processes2)
         {
 
             totalTurnaroundTime += p.getTurnaroundTime();
             totalWaitingTime += p.getWaitingTime();
         }
 
-        System.out.println("AVG - Turnaround Time: " + (double) totalTurnaroundTime/processes.size());
-        System.out.println("AVG - Waiting Time: " + (double) totalWaitingTime/processes.size());
+        System.out.println("AVG - Turnaround Time: " + (double) totalTurnaroundTime/processes2.size());
+        System.out.println("AVG - Waiting Time: " + (double) totalWaitingTime/processes2.size());
     }
 
 
     @Override
     public void process() {
+
+
+
 
         // Sort processes (arrival time - ascending order)
         Collections.sort(this.processes);
@@ -230,9 +234,9 @@ public class AGAT extends  CPUScheduler {
         int currentIndex;
 
 
-        for(int time = this.processes.get(0).getArrivalTime(); !this.isFinished(); )
+        for(int time  = this.processes.get(0).arrivalTime; !this.isFinished(); )
         {
-
+            //System.out.println("START------------------ " + time + " ------------------START");
 
 
             if(preIndex == -1)
@@ -246,7 +250,7 @@ public class AGAT extends  CPUScheduler {
                 currentIndex = this.getProcessIndex(current);
             }
 
-            if(this.processes.get(currentIndex).getQuantum() != 0)
+            if(this.processes.get(currentIndex).quantum != 0)
             {
                 // Set Service Time
                 this.processes.get(currentIndex).setServiceTime(time);
@@ -265,13 +269,12 @@ public class AGAT extends  CPUScheduler {
             time += preemptiveAGTime;
 
             // Update Quantum
-            if(current.remainingTime == 0)
-            {
-                this.processes.add(current);
+            if(current.remainingTime == 0) {
+                this.processes2.add(current);
                 // The running process finished its job
                 this.processes.get(currentIndex).setQuantum(0);
             }
-            else if((nonPreemptiveAGTime + preemptiveAGTime) == current.getQuantum())
+            else if((nonPreemptiveAGTime + preemptiveAGTime) == current.quantum)
             {
                 // The running process used all its quantum time
                 this.processes.get(currentIndex).quantum += getceilOfMeanQuantum();
@@ -285,12 +288,12 @@ public class AGAT extends  CPUScheduler {
                 readyQueue.add(current);
             }
 
-
+         ;
 
 
 
             // Set waiting Time
-            int wT = this.processes.get(currentIndex).getServiceTime() - this.processes.get(currentIndex).getArrivalTime();
+            int wT = this.processes.get(currentIndex).getServiceTime() - this.processes.get(currentIndex).arrivalTime;
             this.processes.get(currentIndex).waitingTime += wT;
             this.processes.get(currentIndex).arrivalTime = time;
 
@@ -300,6 +303,8 @@ public class AGAT extends  CPUScheduler {
 
 
             outputTest.add(current);
+            processes.get(currentIndex).setAGAT_Factor(agatFactor( processes.get(currentIndex).getPriority() ,
+                    processes.get(currentIndex).getArrivalTime() , processes.get(currentIndex).getRemainingTime()));
         }
 
         // Print Results with AVG
