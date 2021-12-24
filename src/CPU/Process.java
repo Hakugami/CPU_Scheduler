@@ -1,24 +1,19 @@
 package CPU;
 
-public class Process {
+public class Process implements Comparable<Process> {
     private String processName;
     private int pID;
-    private int arrivalTime;
+    protected int arrivalTime;
     private int burstTime;
     private int priority;
-    private int waitingTime;
+    protected int waitingTime;
     private int turnaroundTime;
     private int finishTime;
     private double AGAT_Factor;
-    private int quantum;
+    protected int quantum;
+    protected int remainingTime;
+    private int serviceTime;
 
-    public double getAGAT_Factor() {
-        return AGAT_Factor;
-    }
-
-    public void setAGAT_Factor(double AGAT_Factor) {
-        this.AGAT_Factor = AGAT_Factor;
-    }
 
     public Process(String processName, int arrivalTime, int burstTime, int priority, int waitingTime, int turnaroundTime) {
             this.processName = processName;
@@ -35,12 +30,52 @@ public class Process {
         {
             this(processName, arrivalTime, burstTime, priority, 0, 0);
         }
+        public Process(String processName, int arrivalTime, int burstTime, int priority,int quantum)
+        {
+           this.processName=processName;
+           this.arrivalTime=arrivalTime;
+           this.burstTime=burstTime;
+           this.priority=priority;
+           this.quantum=quantum;
+        }
 
     public Process(String processName, int arrivalTime, int burstTime){
         this(processName, arrivalTime, burstTime, 0, 0, 0);
     }
 
-    
+
+    public int getQuantum() {
+        return quantum;
+    }
+
+    public void setQuantum(int quantum) {
+        this.quantum = quantum;
+    }
+
+    public double getAGAT_Factor() {
+        return AGAT_Factor;
+    }
+
+    public void setAGAT_Factor(double AGAT_Factor) {
+        this.AGAT_Factor = AGAT_Factor;
+    }
+
+    public int getRemainingTime() {
+        return remainingTime;
+    }
+
+    public void setRemainingTime(int remainingTime) {
+        this.remainingTime = remainingTime;
+    }
+
+    public int getServiceTime() {
+        return serviceTime;
+    }
+
+    public void setServiceTime(int serviceTime) {
+        this.serviceTime = serviceTime;
+    }
+
     public void setArrivalTime(int arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
@@ -94,6 +129,12 @@ public class Process {
     @Override
     public String toString(){
         return processName;
+    }
+
+    //ascending order sorting
+    @Override
+    public int compareTo(Process o) {
+        return this.arrivalTime - o.arrivalTime;
     }
 }
 
