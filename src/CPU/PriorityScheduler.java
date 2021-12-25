@@ -61,6 +61,11 @@ public class PriorityScheduler extends CPUScheduler{
                         process.setChangeableArrivalTime(0);
                 }
                 timePassed += current.getBurstTime();
+                //solving starvation problem by aging the waiting processes
+                for (Process process : priorityOrderedProcesses){
+                    if(process.getPriority()>0)
+                        process.setPriority( process.getPriority() - 1 );
+                }
             }else{
                 // if no process arrived subtract 1 from their arrival time (time passes)
                 for(Process process:processes){
