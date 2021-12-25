@@ -22,9 +22,9 @@ public class AGAT extends  CPUScheduler {
         float v2;
         int res=0;
         int n= processes.size();
-        ArrayList<Integer> remainingBursts = new ArrayList<Integer>();
-        for (int i = 0; i < n; i++){
-            remainingBursts.add(  processes.get(i).getRemainingTime());
+        Vector<Integer> remainingBursts = new Vector<>();
+        for (Process process : processes) {
+            remainingBursts.add(process.getRemainingTime());
         }
         int mx=remainingBursts.get(0);
         for(int i=0;i<n;i++){
@@ -42,8 +42,10 @@ public class AGAT extends  CPUScheduler {
 
        float v1=calculate_v1();
        float v2=calculate_v2();
-        System.out.println("V2: "+v2);
-        return ((10 - priority) + Math.ceil(arrivalTime / v1) + Math.ceil(burstTime / v2));
+//        System.out.println("V2: "+v2);
+        double result= ((10 - priority) + Math.ceil(arrivalTime / v1) + Math.ceil(burstTime / v2));
+        System.out.println("Factor: "+result+" ----------------V2: "+v2);
+        return result;
     }
 
     public boolean isFinished()
@@ -143,6 +145,22 @@ public class AGAT extends  CPUScheduler {
             process.setAGAT_Factor(agatFactor( process.getPriority() , process.getArrivalTime() , process.getBurstTime()));
         }
     }
+    public void setProcessTime()
+    {
+        for (Process process : this.processes) {
+            // Set Remaining Time
+//            process.setRemainingTime(process.getBurstTime());
+
+            // Set AG-Factor
+            //check arrival time .......................................
+            if(process.getRemainingTime()!=0){
+                System.out.println( process.getProcessName()+"  Arrival: "+process.getArrivalTime()+" -=--=-=-=-=-==-Remaining time: "+process.getRemainingTime());
+               process.setAGAT_Factor(agatFactor( process.getPriority() , process.getArrivalTime() , process.getRemainingTime()));
+               continue;
+            }
+            process.setAGAT_Factor(0);
+        }
+    }
     public int nonPreemptiveAG(Process _p)
     {
         int nonPreemptiveAGTime = (int) Math.ceil(_p.getQuantum() * 0.4);
@@ -232,11 +250,11 @@ public class AGAT extends  CPUScheduler {
         int preIndex = -1;
         Process current = null;
         int currentIndex;
+        int time=0;
+        Process previous=null;
 
-
-        for(int time  = this.processes.get(0).arrivalTime; !this.isFinished(); )
+        for( time  = this.processes.get(0).getArrivalTime(); !this.isFinished(); )
         {
-            //System.out.println("START------------------ " + time + " ------------------START");
 
 
             if(preIndex == -1)
@@ -246,9 +264,20 @@ public class AGAT extends  CPUScheduler {
             }
             else
             {
+                System.out.println("----------------------------------------");
+                 setProcessTime();
+                System.out.println("----------------------------------------");
                 current = this.getBestProcess(time, preIndex);
                 currentIndex = this.getProcessIndex(current);
+
             }
+            if (current==previous){
+                readyQueue.add(processes.get(currentIndex));
+                preIndex = this.getProcessIndex(current)+1;
+                continue;
+            }
+//                processes.get(currentIndex).setAGAT_Factor(agatFactor( processes.get(currentIndex).getPriority() , processes.get(currentIndex).getArrivalTime()
+//                        , processes.get(currentIndex).getRemainingTime()));
 
             if(this.processes.get(currentIndex).quantum != 0)
             {
@@ -288,7 +317,7 @@ public class AGAT extends  CPUScheduler {
                 readyQueue.add(current);
             }
 
-         ;
+
 
 
 
@@ -300,11 +329,12 @@ public class AGAT extends  CPUScheduler {
 
             preIndex = this.getProcessIndex(current);
 
-
+//            System.out.println(processes.get(currentIndex).getProcessName()+" Quantum: "+processes.get(currentIndex).getQuantum());
 
             outputTest.add(current);
-            processes.get(currentIndex).setAGAT_Factor(agatFactor( processes.get(currentIndex).getPriority() ,
-                    processes.get(currentIndex).getArrivalTime() , processes.get(currentIndex).getRemainingTime()));
+            previous=current;
+
+
         }
 
         // Print Results with AVG

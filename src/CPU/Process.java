@@ -127,8 +127,13 @@ public class Process implements Comparable<Process> {
 
 
     @Override
-    public String toString(){
-        return processName;
+    public String toString() {
+        return "Process{" +
+                "processName='" + processName + '\'' +
+                ", arrivalTime=" + arrivalTime +
+                ", waitingTime=" + waitingTime +
+                ", turnaroundTime=" + turnaroundTime +
+                '}';
     }
 
     //ascending order sorting
@@ -137,4 +142,5 @@ public class Process implements Comparable<Process> {
         return this.arrivalTime - o.arrivalTime;
     }
 }
+
 
