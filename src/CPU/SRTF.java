@@ -6,28 +6,35 @@ class SRTF extends CPUScheduler {
     @Override
     public void process() {
         order=new String[getTotalBurstTime()];
-        int n= processes.size();
-        int remingT_Arr[] = new int[n];
-        
-        // copy burst time into remingT_Arr[] and find total burst time of all processses
-        for (int i = 0; i < n; i++){
-            remingT_Arr[i] = processes.get(i).getBurstTime();
-        }
+        int size= processes.size();
+        int remingT_Arr[] = new int[size];
         int complete = 0;
         int currentTime = 0;
         int minm = Integer.MAX_VALUE;
         int shortest = 0;
         int finishTime;
-        int count=0;
+        int countEnterProcess=0;//for order
         int wt;
         int tat;
+        int numOfProcessInRun=3; //max process os can see
+        int countCompletedProcess=numOfProcessInRun;
+        int reminaingAfterDived=size%numOfProcessInRun;
+        int forItreation=size/numOfProcessInRun;
+        int trueTime=0;
         boolean found = false;
-      
-        // CPU.Process until all processes gets
-        // completed
-        while (complete != n) {
+        
+                // copy burst time into remingT_Arr[] and find total burst time of all processses
+        for (int i = 0; i < size; i++)
+            remingT_Arr[i] = processes.get(i).getBurstTime();
+        
+        if(reminaingAfterDived!=0&&forItreation==0){
+            countCompletedProcess=reminaingAfterDived;
+            reminaingAfterDived=0;
+            forItreation++;}
+        for(int i=0;i<forItreation;i++){
+        while (complete != countCompletedProcess) {
             //find process have min remaining time 
-            for (int j = 0; j < n; j++)
+            for (int j = 0; j < countCompletedProcess; j++)
             {
                 if ((processes.get(j).getArrivalTime() <= currentTime) && (remingT_Arr[j]< minm) && remingT_Arr[j] > 0) {
                     minm = remingT_Arr[j];//min burst time
@@ -38,10 +45,11 @@ class SRTF extends CPUScheduler {
       
             if (found == false) {
                 currentTime++;
+                trueTime++;
                 continue;
             }
-            order[count]=processes.get(shortest).getProcessName();
-                    count++;
+            order[countEnterProcess]=processes.get(shortest).getProcessName();
+                    countEnterProcess++;
                     
             remingT_Arr[shortest]--;
             
@@ -53,11 +61,10 @@ class SRTF extends CPUScheduler {
  
             
             if (remingT_Arr[shortest] == 0) {
-                
                 complete++;//process executed
                 found = false;
                 
-                finishTime = currentTime + 1;
+                finishTime = trueTime + 1;
                 processes.get(shortest).setFinishTime(finishTime);
                 // Calculate waiting time for each process
                 wt= finishTime -processes.get(shortest).getBurstTime() -processes.get(shortest).getArrivalTime();
@@ -71,6 +78,22 @@ class SRTF extends CPUScheduler {
                 
             }
             currentTime++;
+            trueTime++;
+        }
+        
+        //check finall iteration if remaining!=0
+        if(reminaingAfterDived!=0&&forItreation-i==1){
+            currentTime=processes.get(countCompletedProcess).getArrivalTime();
+            countCompletedProcess+=reminaingAfterDived;
+            reminaingAfterDived=0;
+            forItreation++;}
+        else {
+            if(size>countCompletedProcess)
+                currentTime=processes.get(countCompletedProcess).getArrivalTime();
+            countCompletedProcess+=numOfProcessInRun;
+        }
+        
+            
         }
     }
 
