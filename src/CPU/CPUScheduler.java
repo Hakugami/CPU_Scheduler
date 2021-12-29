@@ -6,11 +6,13 @@ import java.util.ArrayList;
 
 public abstract class CPUScheduler {
     protected ArrayList<Process> processes =new ArrayList<>();
+    protected ArrayList<Process> processesII =new ArrayList<>();
     protected int timeQuantum;
     protected String[] order;
 
     public boolean add(Process input)
     {
+        processesII.add(input);
         return processes.add(input);
     }
 
@@ -46,8 +48,8 @@ public abstract class CPUScheduler {
     // return total waiting time
     public int getTotalBurstTime(){
         int totalBT=0;
-        for(int i=0;i<processes.size();i++){
-            totalBT+=processes.get(i).getBurstTime();
+        for(int i=0;i<processesII.size();i++){
+            totalBT+=processesII.get(i).getBurstTime();
         }
         return totalBT;
     }
@@ -55,9 +57,9 @@ public abstract class CPUScheduler {
     {
         int sum = 0;
 
-        for (int i=0;i<processes.size();i++)
+        for (int i=0;i<processesII.size();i++)
         {
-            sum += processes.get(i).getWaitingTime();
+            sum += processesII.get(i).getWaitingTime();
         }
 
         return sum;
@@ -66,9 +68,9 @@ public abstract class CPUScheduler {
     {
         int sum = 0;
 
-        for (int i=0;i<processes.size();i++)
+        for (int i=0;i<processesII.size();i++)
         {
-            sum += processes.get(i).getTurnaroundTime();
+            sum += processesII.get(i).getTurnaroundTime();
         }
 
         return sum;
@@ -77,16 +79,15 @@ public abstract class CPUScheduler {
     {
         float avg = 0.0F;
         avg=getTotalWaitingTime();
-        return avg / processes.size();
+        return avg / processesII.size();
     }
     public float getAverageTurnAroundTime()
     {
         float avg = 0.0F;
         avg=getTotalTurnAroundTime();
-        return avg / processes.size();
+        return avg / processesII.size();
     }
     public abstract void process();
 
 
 }
-
