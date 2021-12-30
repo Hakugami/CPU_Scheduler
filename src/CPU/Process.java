@@ -22,6 +22,7 @@ public class Process implements Comparable<Process> {
     public int ceil1;
     public int ceil2;
     public boolean isFinshed = false;
+    private int burstTime2;
 
     public Process(String processName, int arrivalTime, int burstTime, int priority, int waitingTime, int turnaroundTime) {
             this.processName = processName;
@@ -75,7 +76,10 @@ public class Process implements Comparable<Process> {
         this(processName, arrivalTime, burstTime, 0, 0, 0);
     }
 
-
+    public int getBurstTime2() {
+        return this.burstTime2;
+    }
+    public void setBurstTime2(int burstTime){this.burstTime2 = burstTime;}
     public int getQuantum() {
         return quantum;
     }

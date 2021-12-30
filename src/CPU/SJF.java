@@ -7,7 +7,7 @@ import java.util.List;
 class SJFComparator implements Comparator<Process> {
     @Override
     public int compare(Process o1, Process o2) {
-        return Integer.compare(o1.getBurstTime(),o2.getBurstTime());
+        return Integer.compare(o1.getBurstTime2(),o2.getBurstTime2());
     }
 }
 
@@ -25,6 +25,9 @@ public class SJF extends CPUScheduler {
                 else
                     break;
             }
+            for (Process process : SJFProcesses) {
+                process.setBurstTime2( process.getBurstTime());
+            }
             SJFProcesses.sort(new SJFComparator());
             if (!SJFProcesses.isEmpty()) {
                 Process currentProcess = SJFProcesses.get(0);
@@ -41,12 +44,16 @@ public class SJF extends CPUScheduler {
                 }
                 t += currentProcess.getBurstTime();
 
-
+                for (Process process : SJFProcesses){
+                    if(process.getBurstTime2()>0)
+                        process.setBurstTime2( process.getBurstTime2() - 1 );
+                }
             } else {
                 for (Process process : processes) {
                     process.setChangeableArrivalTime(process.getChangeableArrivalTime() - 1);
-                    t++;
+
                 }
+                t++;
             }
         }
 
@@ -71,19 +78,22 @@ public class SJF extends CPUScheduler {
 
 //    public static void main(String[] args){
 //        Process p1 = new Process("p1", 0 , 3);
-//        Process p2 = new Process("p2", 0 , 4);
-//        Process p3 = new Process("p3", 0 , 2);
-//        Process p4 = new Process("p4", 0, 1);
-//        Process p5 = new Process("p5", 0, 3);
+//        Process p2 = new Process("p2", 2 , 5);
+//        Process p3 = new Process("p3", 1 , 4);
+//        Process p4 = new Process("p4", 4, 2);
+//        Process p5 = new Process("p5", 6, 9);
+//        Process p6 = new Process("p6", 5, 4);
+//        Process p7 = new Process("p7", 7, 10);
 //        CPUScheduler scheduler = new SJF();
 //        scheduler.add(p1);
 //        scheduler.add(p2);
 //        scheduler.add(p3);
 //        scheduler.add(p4);
 //        scheduler.add(p5);
+//        scheduler.add(p6);
+//        scheduler.add(p7);
 //        scheduler.process();
 //        getOrderedProcesses();
-//
 //    }
 
 

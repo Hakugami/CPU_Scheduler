@@ -6,27 +6,27 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         //Test case for AGAT Scheduler
-        Process p1 = new Process("P1", 17, 0, 4, 4);
-        Process p2 = new Process("P2", 6, 3, 9, 3);
-        Process p3 = new Process("P3", 10, 4, 3, 5);
-        Process p4 = new Process("P4", 4, 29, 8, 2);
-        ArrayList<Process> processes1=new ArrayList<>();
-        processes1.add(p1);
-        processes1.add(p2);
-        processes1.add(p3);
-        processes1.add(p4);
-        AGAT agat = new AGAT(processes1);
-        System.out.println("ArrayList");
-        for (Process p : agat.processesList) {
-            System.out.println(p);
-        }
-        System.out.println("upComingQueue");
-        for (Process p : agat.upComingQueue) {
-            System.out.println(p);
-        }
-
-        Process best = agat.getBestProcess();
-        agat.runProcess(best);
+//        Process p1 = new Process("P1", 17, 0, 4, 4);
+//        Process p2 = new Process("P2", 6, 3, 9, 3);
+//        Process p3 = new Process("P3", 10, 4, 3, 5);
+//        Process p4 = new Process("P4", 4, 29, 8, 2);
+//        ArrayList<Process> processes1=new ArrayList<>();
+//        processes1.add(p1);
+//        processes1.add(p2);
+//        processes1.add(p3);
+//        processes1.add(p4);
+//        AGAT agat = new AGAT(processes1);
+//        System.out.println("ArrayList");
+//        for (Process p : agat.processesList) {
+//            System.out.println(p);
+//        }
+//        System.out.println("upComingQueue");
+//        for (Process p : agat.upComingQueue) {
+//            System.out.println(p);
+//        }
+//
+//        Process best = agat.getBestProcess();
+//        agat.runProcess(best);
 
         //comment the previous part to add your test case...!!!!!!!!!
 
@@ -74,20 +74,26 @@ public class Main {
 //        System.out.println("Average waiting time = " +s.getAverageWaitingTime());
 //        System.out.println("Average turn around time = " +s.getAverageTurnAroundTime());
         //SJF
-//        Process p1 = new Process("p1", 0 , 3);
-//        Process p2 = new Process("p2", 0 , 4);
-//        Process p3 = new Process("p3", 0 , 2);
-//        Process p4 = new Process("p4", 0, 1);
-//        Process p5 = new Process("p5", 0, 3);
-//        CPUScheduler scheduler = new SJF();
-//        scheduler.add(p1);
-//        scheduler.add(p2);
-//        scheduler.add(p3);
-//        scheduler.add(p4);
-//        scheduler.add(p5);
-//        scheduler.process();
-//        SJF.getOrderedProcesses();
-//        SJF.getTurnaroundTime();
-//        SJF.getWaitingTime();
+        Process p1 = new Process("p1", 0 , 3);
+        Process p2 = new Process("p2", 2 , 5);
+        Process p3 = new Process("p3", 1 , 4);
+        Process p4 = new Process("p4", 4, 2);
+        Process p5 = new Process("p5", 6, 9);
+        Process p6 = new Process("p6", 5, 4);
+        Process p7 = new Process("p7", 7, 10);
+        CPUScheduler scheduler = new SJF();
+        scheduler.add(p1);
+        scheduler.add(p2);
+        scheduler.add(p3);
+        scheduler.add(p4);
+        scheduler.add(p5);
+        scheduler.add(p6);
+        scheduler.add(p7);
+        scheduler.process();
+        SJF.getOrderedProcesses();
+        System.out.println("Turn around time: ");
+        SJF.getTurnaroundTime();
+        System.out.println("wait time: ");
+        SJF.getWaitingTime();
     }
 }
