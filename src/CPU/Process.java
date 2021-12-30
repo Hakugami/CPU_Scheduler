@@ -13,38 +13,37 @@ public class Process implements Comparable<Process> {
     protected int quantum;
     protected int remainingTime;
     private int serviceTime;
-
+    private int burstTime2;  //using in SJF
 
     public Process(String processName, int arrivalTime, int burstTime, int priority, int waitingTime, int turnaroundTime) {
-            this.processName = processName;
-            this.arrivalTime = arrivalTime;
-            this.burstTime = burstTime;
-            this.priority = priority;
-            this.waitingTime = waitingTime;
-            this.turnaroundTime = turnaroundTime;
-            this.changeableArrivalTime = arrivalTime;
-        }
+        this.processName = processName;
+        this.arrivalTime = arrivalTime;
+        this.burstTime = burstTime;
+        this.priority = priority;
+        this.waitingTime = waitingTime;
+        this.turnaroundTime = turnaroundTime;
+        this.changeableArrivalTime = arrivalTime;
+    }
 
 
-        public Process(String processName, int arrivalTime, int burstTime, int priority)
-        {
-            this(processName, arrivalTime, burstTime, priority, 0, 0);
-        }
-        public Process(String processName, int arrivalTime, int burstTime, int priority,int quantum)
-        {
-           this.processName=processName;
-           this.arrivalTime=arrivalTime;
-           this.burstTime=burstTime;
-           this.priority=priority;
-           this.quantum=quantum;
-        }
+    public Process(String processName, int arrivalTime, int burstTime, int priority)
+    {
+        this(processName, arrivalTime, burstTime, priority, 0, 0);
+    }
+    public Process(String processName, int arrivalTime, int burstTime, int priority,int quantum)
+    {
+        this.processName=processName;
+        this.arrivalTime=arrivalTime;
+        this.burstTime=burstTime;
+        this.priority=priority;
+        this.quantum=quantum;
+    }
 
     public Process(String processName, int arrivalTime, int burstTime){
         this(processName, arrivalTime, burstTime, 0, 0, 0);
     }
 
-
-    public int getQuantum() {
+        public int getQuantum() {
         return quantum;
     }
 
@@ -82,11 +81,15 @@ public class Process implements Comparable<Process> {
     public void setBurstTime(int burstTime){
         this.burstTime = burstTime;
     }
+    public void setBurstTime2(int burstTime){this.burstTime2 = burstTime;}
     public void setPriority(int priority){
         this.priority = priority;
     }
     public void setWaitingTime(int waitingTime){
         this.waitingTime = waitingTime;
+    }
+    public void calculateWaitingTime(int t){
+        waitingTime = t - getArrivalTime();
     }
     public void setTurnaroundTime(int turnaroundTime){
         this.turnaroundTime = turnaroundTime;
@@ -102,6 +105,9 @@ public class Process implements Comparable<Process> {
     }
     public int getBurstTime() {
         return this.burstTime;
+    }
+    public int getBurstTime2() {
+        return this.burstTime2;
     }
     public int getPriority(){
         return this.priority;
@@ -142,5 +148,3 @@ public class Process implements Comparable<Process> {
         return this.arrivalTime - o.arrivalTime;
     }
 }
-
-
