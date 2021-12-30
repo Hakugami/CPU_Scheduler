@@ -53,7 +53,7 @@ public class Process implements Comparable<Process> {
         nonPreemitiveTime = (int) Math.round(0.4 * quantum);
         preemitiveTime = quantum - nonPreemitiveTime;
     }
-    static class readyQueueProcessComparator implements Comparator<Process> {
+    class readyQueueProcessComparator implements Comparator<Process>{
 
         @Override
         public int compare(Process o1, Process o2) {
