@@ -70,8 +70,9 @@ public class PriorityScheduler extends CPUScheduler{
                 // if no process arrived subtract 1 from their arrival time (time passes)
                 for(Process process:processes){
                     process.setChangeableArrivalTime( process.getChangeableArrivalTime() - 1 );
-                    timePassed++;
+                
                 }
+                timePassed++;
             }
 
             //System.out.println(priorityOrderedProcesses);
