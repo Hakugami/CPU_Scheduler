@@ -1,343 +1,191 @@
 package CPU;
 
+import java.util.ArrayList;
+import java.util.PriorityQueue;
 
-import java.util.*;
+public class AGAT extends CPUScheduler {
 
+    public int currentTime = 0;
+    ArrayList<Process> processesList = new ArrayList<>();
+    PriorityQueue<Process> readyQueue = new PriorityQueue<>(new Process.readyQueueProcessComparator());
+    PriorityQueue<Process> upComingQueue = new PriorityQueue<>(new Process.upComingQueueProcessComparator());
 
-public class AGAT extends  CPUScheduler {
-    protected Queue<Process> readyQueue=new LinkedList<Process>();
-    private ArrayList<Process> outputTest = new ArrayList<Process>();
-    private ArrayList<Process> processes2 = new ArrayList<Process>();
-    public float calculate_v1() {
-        float v1;
-        int res=processes.get(processes.size()-1).getArrivalTime();
-        if (res > 10) {
-            v1 = res/10F;
-        } else {
-            v1 = 1;
-        }
-        return  v1;
-    }
-    public float calculate_v2() {
-        float v2;
-        int res=0;
-        int n= processes.size();
-        Vector<Integer> remainingBursts = new Vector<>();
-        for (Process process : processes) {
-            remainingBursts.add(process.getRemainingTime());
-        }
-        int mx=remainingBursts.get(0);
-        for(int i=0;i<n;i++){
-            res=Math.max(mx,remainingBursts.get(i));
-//            System.out.println("mx: "+mx+"---------remainingBursts: "+remainingBursts.get(i));
-        }
-        if (res > 10) {
-            v2 = res/10F;
-        } else {
-            v2 = 1;
-        }
-        return  v2;
-    }
-    public double agatFactor(int priority, int arrivalTime, int burstTime){
-
-       float v1=calculate_v1();
-       float v2=calculate_v2();
-//        System.out.println("V2: "+v2);
-        double result= ((10 - priority) + Math.ceil(arrivalTime / v1) + Math.ceil(burstTime / v2));
-        System.out.println("Factor: "+result+" ----------------V2: "+v2);
-        return result;
+    AGAT(ArrayList<Process> processes) {
+        processesList = processes;
+        calcV1();
+        calcCeil1();
+        calcV2();
+        calcCeil2();
+        calcAgatFactor();
+        //copyListToQueue(processesList, readyQueue);
+        copyListToQueue(processesList, upComingQueue);
     }
 
-    public boolean isFinished()
-    {
-        for (Process process : processes) {
-            if (process.getQuantum() != 0)
-                return false;
-        }
-
-        return true;
-    }
-    public Process getLeastAG(int _time)
-    {
-        double minAG = Integer.MAX_VALUE;
-        int index = 0;
-
-        int i = 0;
-        while( (i < this.processes.size()) && (this.processes.get(i).getArrivalTime() <= _time) )
-        {
-            if(this.processes.get(i).getAGAT_Factor() < minAG && this.processes.get(i).getQuantum() != 0)
-            {
-                minAG = this.processes.get(i).getAGAT_Factor();
-                index = i;
+    // ToDo check on update after each add to readyQueue
+    public void runProcess(Process process) {
+        Process runningProcess = process;
+        Process nextProcess = readyQueue.peek();
+        while (runningProcess != null) {
+            while (runningProcess.serviceTime < runningProcess.nonPreemitiveTime) {
+                System.out.println("time " + currentTime + ": " + runningProcess.processName +" is running in its Non-Preemitive Time");
+                currentTime++;
+                runningProcess.serviceTime++;
+                runningProcess.burstTime--;
             }
-            i++;
-        }
-
-        return this.processes.get(index);
-    }
-    public int getProcessIndex(Process process)
-    {
-        for(int i = 0; i < processes.size(); i++)
-        {
-            if(processes.get(i).getProcessName().equals(process.getProcessName()))
-                return i;
-        }
-        return -1;
-    }
-
-    public boolean isLastProcess(Process _p, int _time)
-    {
-        int index = this.getProcessIndex(_p);
-        boolean flag = true;
-
-        if(index == this.processes.size() - 1)
-            return true;
-
-        index++;
-
-        while((index < this.processes.size()) && this.processes.get(index).getArrivalTime() <= _time)
-        {
-            if (this.processes.get(index).getAGAT_Factor() != 0) {
-                flag = false;
-                break;
-            }
-            index++;
-        }
-
-        return flag;
-    }
-
-    public Process getBestProcess(int _time, int _preIndex)
-    {
-        Process p = processes.get(_preIndex);
-
-
-
-        if(this.isLastProcess(p, _time) && readyQueue.size() > 0)
-        {
-            Process temp = readyQueue.poll();
-
-            while(true)
-            {
-                assert temp != null;
-                if(temp.getRemainingTime() != 0)
-                {
-                    return temp;
+            while (true) {
+                addReadyProcessesToReadyQueue();
+                updateProcessesValues();
+                // the process has finished it's job and leaving readyQueue
+                if (runningProcess.burstTime <= 0) {
+                    System.out.println("time " + currentTime + ": " + runningProcess.processName + " finshed and leaving");
+                    runningProcess.isFinshed = true;
+                    runningProcess = readyQueue.poll();
+                    break;
                 }
+                // it's quantum is over
+                if (runningProcess.serviceTime >= runningProcess.quantum) {
+                    System.out.println("time " + currentTime + ": " +
+                            runningProcess.processName + " quantum is over and is going to ready queue");
+                    runningProcess.quantum += 2;
+                    runningProcess.serviceTime = 0;
+                    nextProcess = readyQueue.poll();
+                    readyQueue.add(runningProcess);
+                    runningProcess = nextProcess;
+                    break;
+                }
+                // another process in ready queue must enter instead it
+                if (!readyQueue.isEmpty() && readyQueue.peek().AGAT_Factor < runningProcess.AGAT_Factor) {
+                    System.out.println("time " + currentTime + ": " +
+                            runningProcess.processName + " going to ready queue as another process has to enter instead");
+                    runningProcess.quantum += runningProcess.quantum - runningProcess.serviceTime;
+                    runningProcess.serviceTime = 0;
+                    nextProcess = readyQueue.poll();
+                    readyQueue.add(runningProcess);
+                    runningProcess = nextProcess;
+                    break;
+                } else {
+                    System.out.println("time " + currentTime + ": " + runningProcess.processName +" is running in its Preemptive Time");
+                    currentTime++;
+                    runningProcess.serviceTime++;
+                    runningProcess.burstTime--;
+                }
+            }
+        }
+    }
+    /*
+        public void runProcess(Process process) {
+            Process runningProcess = process;
+            Process nextProcess = readyQueue.peek();
+            while (runningProcess.serviceTime < runningProcess.nonPreemitiveTime) {
+                currentTime++;
+                runningProcess.serviceTime++;
+                runningProcess.burstTime--;
+            }
+            while (runningProcess.serviceTime < runningProcess.quantum && runningProcess.burstTime > 0) {
+                addReadyProcessesToReadyQueue();
+                updateProcessesValues();
+                if (!readyQueue.isEmpty() && readyQueue.peek().AGAT_Factor < runningProcess.AGAT_Factor) {
+                    runningProcess.quantum += runningProcess.quantum - runningProcess.serviceTime;
+                    runningProcess.serviceTime = 0;
+                    nextProcess = readyQueue.poll();
+                    readyQueue.add(runningProcess);
+                    runProcess(nextProcess);
+                } else {
+                    currentTime++;
+                    runningProcess.serviceTime++;
+                    runningProcess.burstTime--;
+                }
+            }
 
-                temp = readyQueue.poll();
+            if (runningProcess.burstTime > 0) {
+                runningProcess.quantum += 2;
+                runningProcess.serviceTime = 0;
+                nextProcess = readyQueue.poll();
+                readyQueue.add(runningProcess);
+                runProcess(nextProcess);
+            } else {
+                runProcess(readyQueue.poll());
             }
 
         }
-        else
-        {
-            return getLeastAG(_time);
-        }
+    */
+    public Process getBestProcess() {
+        addReadyProcessesToReadyQueue();
+        updateProcessesValues();
+        return readyQueue.poll();
     }
-    public void setProcesses()
-    {
-        // Set Remaining Time for all processes (Remaining Time = burstTime), AG-Factor
-        for (Process process : this.processes) {
-            // Set Remaining Time
-            process.setRemainingTime(process.getBurstTime());
 
-            // Set AG-Factor
-            process.setAGAT_Factor(agatFactor( process.getPriority() , process.getArrivalTime() , process.getBurstTime()));
+    public void addReadyProcessesToReadyQueue() {
+        if (upComingQueue.isEmpty()) {
+            return;
         }
-    }
-    public void setProcessTime()
-    {
-        for (Process process : this.processes) {
-            // Set Remaining Time
-//            process.setRemainingTime(process.getBurstTime());
-
-            // Set AG-Factor
-            //check arrival time .......................................
-            if(process.getRemainingTime()!=0){
-                System.out.println( process.getProcessName()+"  Arrival: "+process.getArrivalTime()+" -=--=-=-=-=-==-Remaining time: "+process.getRemainingTime());
-               process.setAGAT_Factor(agatFactor( process.getPriority() , process.getArrivalTime() , process.getRemainingTime()));
-               continue;
+        while (true) {
+            if (!upComingQueue.isEmpty() && currentTime >= upComingQueue.peek().arrivalTime) {
+                readyQueue.add(upComingQueue.poll());
+            } else {
+                break;
             }
-            process.setAGAT_Factor(0);
         }
     }
-    public int nonPreemptiveAG(Process _p)
-    {
-        int nonPreemptiveAGTime = (int) Math.ceil(_p.getQuantum() * 0.4);
 
-        return Math.min(nonPreemptiveAGTime, _p.getRemainingTime());
-
-    }
-    public int preemptiveAG(Process _p, int _time, int _executingQuantum)
-    {
-        int timeForThisProcess = 0;
-
-
-        while(_p.getRemainingTime() > 0 )
-        {
-            Process p = this.getLeastAG(_time);
-
-            if(!Objects.equals(p.getProcessName(), _p.getProcessName()))
-                break;
-
-
-            _p.setRemainingTime(_p.getRemainingTime()-1);
-            _time++;
-            timeForThisProcess++;
-
-            if(_p.getQuantum() == timeForThisProcess + _executingQuantum)
-                break;
-
-
+    public void calcV1() {
+        int maxArrivalTime = processesList.get(0).arrivalTime;
+        for (int i = 1; i < processesList.size(); i++) {
+            int processArrivalTime = processesList.get(i).arrivalTime;
+            maxArrivalTime = Math.max(processArrivalTime, maxArrivalTime);
         }
 
-        return timeForThisProcess;
-    }
-    public int getceilOfMeanQuantum()
-    {
-        double sum = 0.0;
-        int n = 0;
-
-        for (Process p : processes)
-        {
-            sum += p.getQuantum();
-
-            if(p.getQuantum() != 0)
-                ++n;
-        }
-
-        return (int) Math.ceil((sum/n) * 0.1);
-
-    }
-    public void printResults()
-    {
-        int totalTurnaroundTime = 0;
-        int totalWaitingTime = 0;
-
-
-        for(Process p: outputTest)
-        {
-            // Set Turnaround Time
-            p.setTurnaroundTime(p.getWaitingTime() + p.getBurstTime());
-
-            System.out.println(p);
-        }
-
-        for(Process p: processes2)
-        {
-
-            totalTurnaroundTime += p.getTurnaroundTime();
-            totalWaitingTime += p.getWaitingTime();
-        }
-
-        System.out.println("AVG - Turnaround Time: " + (double) totalTurnaroundTime/processes2.size());
-        System.out.println("AVG - Waiting Time: " + (double) totalWaitingTime/processes2.size());
+        Process.v1 = maxArrivalTime > 10 ? maxArrivalTime / 10F : 1;
     }
 
+    public void calcCeil1() {
+        for (Process currentProcess : processesList) {
+            currentProcess.ceil1 = (int) Math.ceil(currentProcess.arrivalTime / Process.v1);
+        }
+    }
+
+    public void calcV2() {
+        int maxBurstTime = processesList.get(0).burstTime;
+        for (int i = 1; i < processesList.size(); i++) {
+            int processBurstTime = processesList.get(i).burstTime;
+            maxBurstTime = Math.max(processBurstTime, maxBurstTime);
+        }
+        Process.v2 = maxBurstTime > 10 ? maxBurstTime / 10F : 1;
+    }
+
+    public void calcCeil2() {
+        for (Process currentProcess : processesList) {
+            currentProcess.ceil2 = (int) Math.ceil(currentProcess.burstTime / Process.v2);
+        }
+    }
+
+    public void calcAgatFactor() {
+        for (Process currentProcess : processesList) {
+            currentProcess.AGAT_Factor = (10 - currentProcess.priority) + currentProcess.ceil1 + currentProcess.ceil2;
+        }
+    }
+
+    public void updatePreemptive_NonPreemptiveTime() {
+        for (Process currentProcess : processesList) {
+            currentProcess.setPreemitive_NonPreemitiveTime();
+        }
+    }
+
+    public void updateProcessesValues() {
+        calcV2();
+        calcCeil2();
+        calcAgatFactor();
+        updatePreemptive_NonPreemptiveTime();
+    }
+
+    public void copyListToQueue(ArrayList<Process> processesList, PriorityQueue<Process> Queue) {
+        for (Process p : processesList) {
+            Queue.add(p);
+        }
+    }
 
     @Override
     public void process() {
 
-
-
-
-        // Sort processes (arrival time - ascending order)
-        Collections.sort(this.processes);
-
-        // Set Remaining Time for all processes (Remaining Time = burstTime), AG-Factor
-        this.setProcesses();
-
-        int preIndex = -1;
-        Process current = null;
-        int currentIndex;
-        int time=0;
-        Process previous=null;
-
-        for( time  = this.processes.get(0).getArrivalTime(); !this.isFinished(); )
-        {
-
-
-            if(preIndex == -1)
-            {
-                current = this.processes.get(0);
-                currentIndex = 0;
-            }
-            else
-            {
-                System.out.println("----------------------------------------");
-                 setProcessTime();
-                System.out.println("----------------------------------------");
-                current = this.getBestProcess(time, preIndex);
-                currentIndex = this.getProcessIndex(current);
-
-            }
-            if (current==previous){
-                readyQueue.add(processes.get(currentIndex));
-                preIndex = this.getProcessIndex(current)+1;
-                continue;
-            }
-//                processes.get(currentIndex).setAGAT_Factor(agatFactor( processes.get(currentIndex).getPriority() , processes.get(currentIndex).getArrivalTime()
-//                        , processes.get(currentIndex).getRemainingTime()));
-
-            if(this.processes.get(currentIndex).quantum != 0)
-            {
-                // Set Service Time
-                this.processes.get(currentIndex).setServiceTime(time);
-            }
-
-
-            int nonPreemptiveAGTime = this.nonPreemptiveAG(current);
-            time += nonPreemptiveAGTime;
-
-
-
-            this.processes.get(currentIndex).remainingTime -= nonPreemptiveAGTime;
-
-
-            int preemptiveAGTime = this.preemptiveAG(current, time, nonPreemptiveAGTime);
-            time += preemptiveAGTime;
-
-            // Update Quantum
-            if(current.remainingTime == 0) {
-                this.processes2.add(current);
-                // The running process finished its job
-                this.processes.get(currentIndex).setQuantum(0);
-            }
-            else if((nonPreemptiveAGTime + preemptiveAGTime) == current.quantum)
-            {
-                // The running process used all its quantum time
-                this.processes.get(currentIndex).quantum += getceilOfMeanQuantum();
-                readyQueue.add(current);
-            }
-            else
-            {
-                int total = (this.processes.get(currentIndex).quantum - (nonPreemptiveAGTime + preemptiveAGTime));
-                this.processes.get(currentIndex).quantum += total;
-
-                readyQueue.add(current);
-            }
-
-
-
-
-
-            // Set waiting Time
-            int wT = this.processes.get(currentIndex).getServiceTime() - this.processes.get(currentIndex).arrivalTime;
-            this.processes.get(currentIndex).waitingTime += wT;
-            this.processes.get(currentIndex).arrivalTime = time;
-
-
-            preIndex = this.getProcessIndex(current);
-
-//            System.out.println(processes.get(currentIndex).getProcessName()+" Quantum: "+processes.get(currentIndex).getQuantum());
-
-            outputTest.add(current);
-            previous=current;
-
-
-        }
-
-        // Print Results with AVG
-        this.printResults();
     }
 }

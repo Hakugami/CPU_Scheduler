@@ -1,19 +1,27 @@
 package CPU;
 
+import java.util.Comparator;
+
 public class Process implements Comparable<Process> {
-    private String processName;
-    private int pID;
+    protected String processName;
+    protected int pID;
     protected int arrivalTime;
-    private int burstTime;
-    private int priority;
+    protected int burstTime;
+    protected int priority;
     protected int waitingTime;
-    private int turnaroundTime;
-    private int finishTime;
-    private double AGAT_Factor;
+    protected int turnaroundTime;
+    protected int finishTime;
+    protected double AGAT_Factor;
     protected int quantum;
     protected int remainingTime;
-    private int serviceTime;
-
+    protected int serviceTime;
+    int nonPreemitiveTime;
+    int preemitiveTime;
+    public static float v1;
+    public static float v2;
+    public int ceil1;
+    public int ceil2;
+    public boolean isFinshed = false;
 
     public Process(String processName, int arrivalTime, int burstTime, int priority, int waitingTime, int turnaroundTime) {
             this.processName = processName;
@@ -30,14 +38,38 @@ public class Process implements Comparable<Process> {
         {
             this(processName, arrivalTime, burstTime, priority, 0, 0);
         }
-        public Process(String processName, int arrivalTime, int burstTime, int priority,int quantum)
-        {
-           this.processName=processName;
-           this.arrivalTime=arrivalTime;
-           this.burstTime=burstTime;
-           this.priority=priority;
-           this.quantum=quantum;
+    public Process(String processName, int burstTime, int arrivalTime, int priority, int quantum) {
+        this.processName = processName;
+        this.arrivalTime = arrivalTime;
+        this.burstTime = burstTime;
+        this.priority = priority;
+        this.quantum = quantum;
+        serviceTime = 0;
+        setPreemitive_NonPreemitiveTime();
+
+    }
+
+    public void setPreemitive_NonPreemitiveTime(){
+        nonPreemitiveTime = (int) Math.round(0.4 * quantum);
+        preemitiveTime = quantum - nonPreemitiveTime;
+    }
+    static class readyQueueProcessComparator implements Comparator<Process> {
+
+        @Override
+        public int compare(Process o1, Process o2) {
+            return (int) (o1.AGAT_Factor - o2.AGAT_Factor);
         }
+
+    }
+
+    static class upComingQueueProcessComparator implements Comparator<Process>{
+
+        @Override
+        public int compare(Process o1, Process o2) {
+            return o1.arrivalTime - o2.arrivalTime;
+        }
+
+    }
 
     public Process(String processName, int arrivalTime, int burstTime){
         this(processName, arrivalTime, burstTime, 0, 0, 0);

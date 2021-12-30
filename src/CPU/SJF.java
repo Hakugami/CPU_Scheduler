@@ -69,22 +69,22 @@ public class SJF extends CPUScheduler {
     }
 
 
-    public static void main(String[] args){
-        Process p1 = new Process("p1", 0 , 3);
-        Process p2 = new Process("p2", 0 , 4);
-        Process p3 = new Process("p3", 0 , 2);
-        Process p4 = new Process("p4", 0, 1);
-        Process p5 = new Process("p5", 0, 3);
-        CPUScheduler scheduler = new SJF();
-        scheduler.add(p1);
-        scheduler.add(p2);
-        scheduler.add(p3);
-        scheduler.add(p4);
-        scheduler.add(p5);
-        scheduler.process();
-        getOrderedProcesses();
-
-    }
+//    public static void main(String[] args){
+//        Process p1 = new Process("p1", 0 , 3);
+//        Process p2 = new Process("p2", 0 , 4);
+//        Process p3 = new Process("p3", 0 , 2);
+//        Process p4 = new Process("p4", 0, 1);
+//        Process p5 = new Process("p5", 0, 3);
+//        CPUScheduler scheduler = new SJF();
+//        scheduler.add(p1);
+//        scheduler.add(p2);
+//        scheduler.add(p3);
+//        scheduler.add(p4);
+//        scheduler.add(p5);
+//        scheduler.process();
+//        getOrderedProcesses();
+//
+//    }
 
 
 }

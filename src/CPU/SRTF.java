@@ -75,50 +75,50 @@ class SRTF extends CPUScheduler {
     }
 
 }
- class Main
-{
-
-public static void main(String[] args)
-    {
-//        CPUScheduler s=new SRTF();
-//        Scanner input = new Scanner(System.in);
-//        System.out.print("Enter number of process:");
-//        int pNum=input.nextInt();
-//        //take processes info from user
-//        for (int i=0;i<pNum;i++){
-//            System.out.print("Enter process "+(i+1)+" Name:");
-//            String pName=input.next();
-//            System.out.print("Enter process "+(i+1)+" Arrival Time:");
-//            int arrival=input.nextInt();
-//            System.out.print("Enter process "+(i+1)+" Burst Time:");
-//            int burstTime=input.nextInt();
+// class Main
+//{
 //
-//            Process p=new Process(pName,arrival, burstTime);
-//            s.add(p);
-//        }
-//        //call method proces to create schdule data
-//        s.process();
-//        //call method print order to print order of processes
-//        s.printOrder();
+//public static void main(String[] args)
+//    {
+////        CPUScheduler s=new SRTF();
+////        Scanner input = new Scanner(System.in);
+////        System.out.print("Enter number of process:");
+////        int pNum=input.nextInt();
+////        //take processes info from user
+////        for (int i=0;i<pNum;i++){
+////            System.out.print("Enter process "+(i+1)+" Name:");
+////            String pName=input.next();
+////            System.out.print("Enter process "+(i+1)+" Arrival Time:");
+////            int arrival=input.nextInt();
+////            System.out.print("Enter process "+(i+1)+" Burst Time:");
+////            int burstTime=input.nextInt();
+////
+////            Process p=new Process(pName,arrival, burstTime);
+////            s.add(p);
+////        }
+////        //call method proces to create schdule data
+////        s.process();
+////        //call method print order to print order of processes
+////        s.printOrder();
+////
+////        System.out.println("\nProcesses " +" Burst time " +" Waiting time " +" Turn around time");
+////
+////        //print each process data
+////        for (int i = 0; i < s.getProcesses().size(); i++) {
+////            System.out.println(" " + s.getProcesses().get(i).getProcessName() + "\t\t"+ s.getProcesses().get(i).getBurstTime() + "\t\t " + s.getProcesses().get(i).getWaitingTime()+ "\t\t" + s.getProcesses().get(i).getTurnaroundTime());
+////        }
+////        System.out.println("Average waiting time = " +s.getAverageWaitingTime());
+////        System.out.println("Average turn around time = " +s.getAverageTurnAroundTime());
+//        //**************************************************************************************************
+//        // _name, _color, _arrivalTime, _burstTime, _priorityNumber, _quantom
 //
-//        System.out.println("\nProcesses " +" Burst time " +" Waiting time " +" Turn around time");
+//        System.out.println("\nAG Scheduling:");
+//        AGAT agScheduling = new AGAT();
+//        agScheduling.processes.add(new Process("P1",  0, 17, 4, 4));
+//        agScheduling.processes.add(new Process("P2",  3,  6, 9, 3));
+//        agScheduling.processes.add(new Process("P3", 4, 10, 3, 5));
+//        agScheduling.processes.add(new Process("P4",  29, 4, 8, 2));
+//        agScheduling.process();
 //
-//        //print each process data
-//        for (int i = 0; i < s.getProcesses().size(); i++) {
-//            System.out.println(" " + s.getProcesses().get(i).getProcessName() + "\t\t"+ s.getProcesses().get(i).getBurstTime() + "\t\t " + s.getProcesses().get(i).getWaitingTime()+ "\t\t" + s.getProcesses().get(i).getTurnaroundTime());
-//        }
-//        System.out.println("Average waiting time = " +s.getAverageWaitingTime());
-//        System.out.println("Average turn around time = " +s.getAverageTurnAroundTime());
-        //**************************************************************************************************
-        // _name, _color, _arrivalTime, _burstTime, _priorityNumber, _quantom
-
-        System.out.println("\nAG Scheduling:");
-        AGAT agScheduling = new AGAT();
-        agScheduling.processes.add(new Process("P1",  0, 17, 4, 4));
-        agScheduling.processes.add(new Process("P2",  3,  6, 9, 3));
-        agScheduling.processes.add(new Process("P3", 4, 10, 3, 5));
-        agScheduling.processes.add(new Process("P4",  29, 4, 8, 2));
-        agScheduling.process();
-
-    }
-}
+//    }
+//}
