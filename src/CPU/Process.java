@@ -165,7 +165,7 @@ public class Process implements Comparable<Process> {
                 ", arrivalTime=" + arrivalTime +
                 ", waitingTime=" + waitingTime +
                 ", turnaroundTime=" + turnaroundTime +
-                '}';
+                '}'+'\n';
     }
 
     //ascending order sorting
