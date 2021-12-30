@@ -70,14 +70,26 @@ public class PriorityScheduler extends CPUScheduler{
                 // if no process arrived subtract 1 from their arrival time (time passes)
                 for(Process process:processes){
                     process.setChangeableArrivalTime( process.getChangeableArrivalTime() - 1 );
-                
+
                 }
                 timePassed++;
             }
 
             //System.out.println(priorityOrderedProcesses);
         }
-        //System.out.println(orderedProcesses);
+        System.out.println(orderedProcesses);
+
+        // calculate and print average waiting time
+        float sumOfWaitingTimes = 0;
+        for(Process process : orderedProcesses)
+            sumOfWaitingTimes += process.waitingTime;
+        System.out.println("average waiting time: "+sumOfWaitingTimes/orderedProcesses.toArray().length);
+        // calculate and print average turnaround time
+        float sumOfTurnaroundTimes = 0;
+        for(Process process : orderedProcesses)
+            sumOfTurnaroundTimes += process.turnaroundTime;
+        System.out.println("average Turnaround time: "+sumOfTurnaroundTimes/orderedProcesses.toArray().length);
+
         //System.out.println(timePassed);
     }
 
@@ -85,18 +97,18 @@ public class PriorityScheduler extends CPUScheduler{
         return orderedProcesses;
     }
 
-    /*public static void main(String[] args){
-        Process p1 = new Process("1", 0 , 4,1);
-        Process p2 = new Process("2", 0 , 3,2);
-        Process p3 = new Process("3", 6 , 7,1);
-        Process p4 = new Process("4", 11, 4,3);
-        Process p5 = new Process("5", 12, 2,2);
-        CPUScheduler scheduler = new PriorityScheduler();
-        scheduler.add(p1);
-        scheduler.add(p2);
-        scheduler.add(p3);
-        scheduler.add(p4);
-        scheduler.add(p5);
-        scheduler.process();
-    }*/
+//    public static void main(String[] args){
+//        Process p1 = new Process("1", 0 , 4,1);
+//        Process p2 = new Process("2", 0 , 3,2);
+//        Process p3 = new Process("3", 6 , 7,1);
+//        Process p4 = new Process("4", 11, 4,3);
+//        Process p5 = new Process("5", 12, 2,2);
+//        CPUScheduler scheduler = new PriorityScheduler();
+//        scheduler.add(p1);
+//        scheduler.add(p2);
+//        scheduler.add(p3);
+//        scheduler.add(p4);
+//        scheduler.add(p5);
+//        scheduler.process();
+//    }
 }

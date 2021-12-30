@@ -80,35 +80,35 @@ class SRTF extends CPUScheduler {
 //
 //public static void main(String[] args)
 //    {
-////        CPUScheduler s=new SRTF();
-////        Scanner input = new Scanner(System.in);
-////        System.out.print("Enter number of process:");
-////        int pNum=input.nextInt();
-////        //take processes info from user
-////        for (int i=0;i<pNum;i++){
-////            System.out.print("Enter process "+(i+1)+" Name:");
-////            String pName=input.next();
-////            System.out.print("Enter process "+(i+1)+" Arrival Time:");
-////            int arrival=input.nextInt();
-////            System.out.print("Enter process "+(i+1)+" Burst Time:");
-////            int burstTime=input.nextInt();
-////
-////            Process p=new Process(pName,arrival, burstTime);
-////            s.add(p);
-////        }
-////        //call method proces to create schdule data
-////        s.process();
-////        //call method print order to print order of processes
-////        s.printOrder();
-////
-////        System.out.println("\nProcesses " +" Burst time " +" Waiting time " +" Turn around time");
-////
-////        //print each process data
-////        for (int i = 0; i < s.getProcesses().size(); i++) {
-////            System.out.println(" " + s.getProcesses().get(i).getProcessName() + "\t\t"+ s.getProcesses().get(i).getBurstTime() + "\t\t " + s.getProcesses().get(i).getWaitingTime()+ "\t\t" + s.getProcesses().get(i).getTurnaroundTime());
-////        }
-////        System.out.println("Average waiting time = " +s.getAverageWaitingTime());
-////        System.out.println("Average turn around time = " +s.getAverageTurnAroundTime());
+//        CPUScheduler s=new SRTF();
+//        Scanner input = new Scanner(System.in);
+//        System.out.print("Enter number of process:");
+//        int pNum=input.nextInt();
+//        //take processes info from user
+//        for (int i=0;i<pNum;i++){
+//            System.out.print("Enter process "+(i+1)+" Name:");
+//            String pName=input.next();
+//            System.out.print("Enter process "+(i+1)+" Arrival Time:");
+//            int arrival=input.nextInt();
+//            System.out.print("Enter process "+(i+1)+" Burst Time:");
+//            int burstTime=input.nextInt();
+//
+//            Process p=new Process(pName,arrival, burstTime);
+//            s.add(p);
+//        }
+//        //call method proces to create schdule data
+//        s.process();
+//        //call method print order to print order of processes
+//        s.printOrder();
+//
+//        System.out.println("\nProcesses " +" Burst time " +" Waiting time " +" Turn around time");
+//
+//        //print each process data
+//        for (int i = 0; i < s.getProcesses().size(); i++) {
+//            System.out.println(" " + s.getProcesses().get(i).getProcessName() + "\t\t"+ s.getProcesses().get(i).getBurstTime() + "\t\t " + s.getProcesses().get(i).getWaitingTime()+ "\t\t" + s.getProcesses().get(i).getTurnaroundTime());
+//        }
+//        System.out.println("Average waiting time = " +s.getAverageWaitingTime());
+//        System.out.println("Average turn around time = " +s.getAverageTurnAroundTime());
 //        //**************************************************************************************************
 //        // _name, _color, _arrivalTime, _burstTime, _priorityNumber, _quantom
 //
