@@ -77,7 +77,19 @@ public class PriorityScheduler extends CPUScheduler{
 
             //System.out.println(priorityOrderedProcesses);
         }
-        //System.out.println(orderedProcesses);
+        System.out.println(orderedProcesses);
+
+        // calculate and print average waiting time
+        float sumOfWaitingTimes = 0;
+        for(Process process : orderedProcesses)
+            sumOfWaitingTimes += process.waitingTime;
+        System.out.println("average waiting time: "+sumOfWaitingTimes/orderedProcesses.toArray().length);
+        // calculate and print average turnaround time
+        float sumOfTurnaroundTimes = 0;
+        for(Process process : orderedProcesses)
+            sumOfTurnaroundTimes += process.turnaroundTime;
+        System.out.println("average Turnaround time: "+sumOfTurnaroundTimes/orderedProcesses.toArray().length);
+
         //System.out.println(timePassed);
     }
 
